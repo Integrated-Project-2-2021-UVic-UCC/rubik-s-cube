@@ -1,20 +1,28 @@
-int steps = 22;       // pin step 9
-int direccion = 24;   // pin direccion 3
+int steps = 22;       
+int direccion = 24;   
 int s=0;
+int x=5;
+int sentido;
 
- 
 void setup() {                
   
   // inicializamos pin como salidas.
-  
+  Serial.begin(9600);
+  Serial.setTimeout(1);
   pinMode(steps, OUTPUT); 
   pinMode(direccion, OUTPUT); 
 }
  
 void loop() {
-
+    while (!Serial.available());
+    x = Serial.readString().toInt();
     while (s!=50){
-    int sentido = HIGH;
+    if (x==0){
+      sentido=LOW;
+    }
+    else{
+      sentido=HIGH;
+    }
     digitalWrite(direccion, sentido);    // cambiamos de dirección segun pulsador
     digitalWrite(steps, HIGH);         // Aqui generamos un flanco de bajada HIGH - LOW
     delay(1.5);              // Pequeño retardo para formar el pulso en STEP
@@ -24,4 +32,5 @@ void loop() {
     }
     s=0;
     delay(1000);
+    x=5;
   }
