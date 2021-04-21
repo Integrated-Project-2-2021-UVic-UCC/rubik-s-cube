@@ -1,53 +1,62 @@
-int steps1 = 26;       
-int direccion1 = 28; 
-int steps2 = 22;       
-int direccion2 = 24;    
+int pin_mot[6]={22,26,30,34,38,42};
+int pin_dir[6]={24,28,32,36,40,44};
 int s=0;
-int x=5;
-int y;
+int c=0;
+int motor;
+int dir;
 int sentido;
+int m[1000];
+int d[1000];
 
 void setup() {                
   
   // inicializamos pin como salidas.
   Serial.begin(9600);
   Serial.setTimeout(1);
-  pinMode(steps1, OUTPUT); 
-  pinMode(direccion1, OUTPUT); 
-  pinMode(steps2, OUTPUT); 
-  pinMode(direccion2, OUTPUT); 
+  pinMode(22, OUTPUT); 
+  pinMode(24, OUTPUT); 
+  pinMode(26, OUTPUT); 
+  pinMode(28, OUTPUT);
+  pinMode(30, OUTPUT); 
+  pinMode(32, OUTPUT); 
+  pinMode(34, OUTPUT); 
+  pinMode(36, OUTPUT);
+  pinMode(38, OUTPUT); 
+  pinMode(40, OUTPUT); 
+  pinMode(42, OUTPUT); 
+  pinMode(44, OUTPUT); 
 }
  
 void loop() {
-    while (!Serial.available());
-    x = Serial.readString().toInt();
-    while (!Serial.available());
-    y=Serial.readString().toInt();
+    while (motor!=9 && dir!=9){
+      c+=1;
+      while (!Serial.available());
+      motor = Serial.readString().toInt();
+      while (!Serial.available());
+      dir = Serial.readString().toInt();
+      m[c]=motor;
+      d[c]=dir;
+    }
+    for (int i=0;i<=c-1;i++){
+      motor=m[c];
+      dir=d[c];
+      
+    }
+    
     while (s!=50){
-    if (x==0){
+    if (dir==0){
       sentido=LOW;
     }
     else{
       sentido=HIGH;
     }
-    if (y==1){
-      digitalWrite(direccion1, sentido);    // cambiamos de dirección segun pulsador
-      digitalWrite(steps1, HIGH);         // Aqui generamos un flanco de bajada HIGH - LOW
-      delay(1.5);              // Pequeño retardo para formar el pulso en STEP
-      digitalWrite(steps1, LOW);         // y el A4988 de avanzara un paso el motor
-      delay(1.5); // generamos un retardo con el valor leido del potenciometro
-      s+=1;
-      }
-    if (y==0){
-      digitalWrite(direccion2, sentido);    // cambiamos de dirección segun pulsador
-      digitalWrite(steps2, HIGH);         // Aqui generamos un flanco de bajada HIGH - LOW
-      delay(1.5);              // Pequeño retardo para formar el pulso en STEP
-      digitalWrite(steps2, LOW);         // y el A4988 de avanzara un paso el motor
-      delay(1.5); // generamos un retardo con el valor leido del potenciometro
-      s+=1;
-      }
+    digitalWrite(pin_dir[dir], sentido);    // cambiamos de dirección segun pulsador
+    digitalWrite(pin_mot[motor], HIGH);         // Aqui generamos un flanco de bajada HIGH - LOW
+    delay(1.5);              // Pequeño retardo para formar el pulso en STEP
+    digitalWrite(pin_mot[motor], LOW);         // y el A4988 de avanzara un paso el motor
+    delay(1.5); // generamos un retardo con el valor leido del potenciometro
+    s+=1;
     }
    s=0;
    delay(1000);
-   x=5;
 }
