@@ -26,37 +26,35 @@ void setup() {
   pinMode(42, OUTPUT); 
   pinMode(44, OUTPUT); 
 }
- 
+
 void loop() {
     while (motor!=9 && dir!=9){
-      c+=1;
       while (!Serial.available());
       motor = Serial.readString().toInt();
       while (!Serial.available());
       dir = Serial.readString().toInt();
       m[c]=motor;
       d[c]=dir;
+      c+=1;
     }
-    for (int i=0;i<=c-1;i++){
-      motor=m[c];
-      dir=d[c];
-      
+    for (int i=0;i<=(c-2);i++){
+      motor=m[i];
+      dir=d[i];
+      if (dir==0){
+        sentido=LOW;
+      }
+      else{
+        sentido=HIGH;
+      }
+      while (s!=50){
+        digitalWrite(pin_dir[motor], sentido);    // cambiamos de dirección segun pulsador
+        digitalWrite(pin_mot[motor], HIGH);         // Aqui generamos un flanco de bajada HIGH - LOW
+        delay(1.5);              // Pequeño retardo para formar el pulso en STEP
+        digitalWrite(pin_mot[motor], LOW);         // y el A4988 de avanzara un paso el motor
+        delay(1.5); // generamos un retardo con el valor leido del potenciometro
+        s+=1;
+      }
+     s=0;
+     delay(1000);
     }
-    
-    while (s!=50){
-    if (dir==0){
-      sentido=LOW;
-    }
-    else{
-      sentido=HIGH;
-    }
-    digitalWrite(pin_dir[dir], sentido);    // cambiamos de dirección segun pulsador
-    digitalWrite(pin_mot[motor], HIGH);         // Aqui generamos un flanco de bajada HIGH - LOW
-    delay(1.5);              // Pequeño retardo para formar el pulso en STEP
-    digitalWrite(pin_mot[motor], LOW);         // y el A4988 de avanzara un paso el motor
-    delay(1.5); // generamos un retardo con el valor leido del potenciometro
-    s+=1;
-    }
-   s=0;
-   delay(1000);
 }
